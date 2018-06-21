@@ -6,7 +6,7 @@
  * e-mail: admin@uimaker.com
  */
 *{font-size:9pt;border:0;margin:0;padding:0;}
-body{font-family:'微软雅黑'; margin:0 auto;min-width:980px;}
+body{font-family:"Microsoft yahei"; margin:0 auto;min-width:980px;}
 ul{display:block;margin:0;padding:0;list-style:none;}
 li{display:block;margin:0;padding:0;list-style: none;}
 img{border:0;}
@@ -109,12 +109,12 @@ h2{font-weight:normal;}
 .tablelist th{background:url(../images/th.gif) repeat-x; height:34px; line-height:34px; border-bottom:solid 1px #b6cad2; text-indent:11px; text-align:left;}
 .tablelist td{line-height:35px; text-indent:11px; border-right: dotted 1px #c7c7c7;}
 .tablelink{color:#056dae;}
-.tablelist tbody tr.odd{background:#f5f8fa;}
+.tablelist tbody tr:nth-child(2n){background:#f5f8fa;}
 .tablelist tbody tr:hover{background:#e5ebee;}
 .sort{padding-left:3px;}
 
 /*page*/
-.pagin{position:relative;margin-top:10px;padding:0 12px;}
+.pagin{position:relative;margin-top:10px;padding:0 12px;text-align: right;}
 .pagin .blue{color:#056dae;font-style:normal;}
 .pagin .paginList{position:absolute;right:12px;top:0;}
 .pagin .paginList .paginItem{float:left;}
@@ -295,3 +295,38 @@ h2{font-weight:normal;}
 .seachform li label{padding-right:10px; float:left; line-height:32px;}
 .scinput{width:150px; height:32px; line-height:32px; border-top:solid 1px #a7b5bc; border-left:solid 1px #a7b5bc; border-right:solid 1px #ced9df; border-bottom:solid 1px #ced9df; background:url(../images/inputbg.gif) repeat-x; text-indent:10px;}
 .scbtn{width:85px;height:35px; background:url(../images/btnbg.png) no-repeat center; font-size:14px;font-weight:bold;color:#fff; cursor:pointer;border-radius:3px; behavior:url(js/pie.htc);}
+
+.pagination{display: inline-block;}
+.pagination a {
+    text-decoration: none;
+    border: 1px solid #066cac;
+    color: #066cac;
+}
+
+.pagination a, .pagination span {
+    display: inline-block;
+    padding:3px 8px;
+    text-align: center;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.pagination .current {
+    background: #066cac;
+    color: #fff;
+    border: 1px solid #066cac;
+}
+
+.pagination .current.prev, .pagination .current.next{
+    color:#999;
+    border-color:#999;
+    background:#fff;
+}
+
+.seach-col{padding:20px 30px 16px 0;text-align: right;}
+.seach-col label{font-size:15px;}
+.seach-col .dfinput{width:200px;}
+.seach-col .btn{width:80px;background-size:100% 100%;position: relative;top:2px;margin-left:20px;}
+
+
+

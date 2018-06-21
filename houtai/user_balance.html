@@ -44,37 +44,27 @@ $(document).ready(function(){
     
     <div class="rightinfo">
     
-    <div class="tools">
+
+        <div class="seach-col">
+        <label>姓名：</label> <input type="text" id="real_name"  class="dfinput">
+
+        <input id="searchBtn" type="button" class="btn" value="搜索">
+        </div>
     
 
-    
-    </div>
-    
     
     <table class="tablelist">
     	<thead>
     	<tr>
             <th>姓名</th>
             <th>用户id</th>
-            <th>交易金额</th>
-            <th>用户唯一ID</th>
             <th>身份证号</th>
             <th>总余额</th>
 
         </tr>
         </thead>
         <tbody>
-        <tr>
-        <td>20130908</td>
-        <td>王金平幕僚：马英九声明字字见血 人活着没意思</td>
-        <td>admin</td>
-            <td>admin</td>
-            <td>admin</td>
-            <td>admin</td>
-            <td>admin</td>
-            <td>admin</td>
-            <td>admin</td>
-        </tr>
+
         
 
         </tbody>
@@ -82,47 +72,113 @@ $(document).ready(function(){
     
    
     <div class="pagin">
-    	<div class="message">共<i class="blue">1256</i>条记录，当前显示第&nbsp;<i class="blue">2&nbsp;</i>页</div>
-        <ul class="paginList">
-        <li class="paginItem"><a href="javascript:;"><span class="pagepre"></span></a></li>
-        <li class="paginItem"><a href="javascript:;">1</a></li>
-        <li class="paginItem current"><a href="javascript:;">2</a></li>
-        <li class="paginItem"><a href="javascript:;">3</a></li>
-        <li class="paginItem"><a href="javascript:;">4</a></li>
-        <li class="paginItem"><a href="javascript:;">5</a></li>
-        <li class="paginItem more"><a href="javascript:;">...</a></li>
-        <li class="paginItem"><a href="javascript:;">10</a></li>
-        <li class="paginItem"><a href="javascript:;"><span class="pagenxt"></span></a></li>
-        </ul>
+
+        <div id="Pagination" class="pagination"></div>
+
     </div>
     
-    
-    <div class="tip">
-    	<div class="tiptop"><span>提示信息</span><a></a></div>
-        
-      <div class="tipinfo">
-        <span><img src="images/ticon.png" /></span>
-        <div class="tipright">
-        <p>是否确认对信息的修改 ？</p>
-        <cite>如果是请点击确定按钮 ，否则请点取消。</cite>
-        </div>
-        </div>
-        
-        <div class="tipbtn">
-        <input name="" type="button"  class="sure" value="确定" />&nbsp;
-        <input name="" type="button"  class="cancel" value="取消" />
-        </div>
-    
-    </div>
-    
+
     
     
     
     </div>
-    
-    <script type="text/javascript">
-	$('.tablelist tbody tr:odd').addClass('odd');
-	</script>
+
+    <script src="js/jquery.pagination.js"></script>
+    <script>
+
+        $(function(){
+            //此demo通过Ajax加载分页元素
+
+              var pageSize= 10;
+
+            var real_name="";
+            $("#searchBtn").click(function()
+            {
+                real_name=$("#real_name").val();
+                $("#Pagination").empty();
+                pageInit();
+            });
+
+            function pageInit()
+            {
+
+                $.ajax({
+                    type: "GET",
+                    url: "data/user_balance.json",
+                    dataType:"json",
+                    data: {real_name:real_name},
+                    success: function(data){
+
+                        console.log(data);
+                        if(data.code=1000)
+                        {
+                            var page_count=data.page_count;
+                            // 创建分页
+                            $("#Pagination").pagination(page_count, {
+                                num_edge_entries: 1, //边缘页数
+                                num_display_entries: 4, //主体页数
+                                callback: pageselectCallback,
+                                items_per_page: pageSize, //每页显示1项
+                                prev_text: "前一页",
+                                next_text: "后一页"
+                            });
+
+                        }
+                    }
+                });
+
+
+            }
+
+            pageInit();
+
+
+            function pageselectCallback(page_index, jq){
+
+                $.ajax({
+                    type: "GET",
+                    url: "data/user_balance.json",
+                    dataType:"json",
+                    data: {pageSize:pageSize,page_index:page_index,real_name:real_name},
+                    success: function(data){
+
+                        console.log(data);
+                        if(data.code=1000)
+                        {
+                            data=data.data;
+                            $(".tablelist tbody").empty();
+                            var html="";
+                            for(var i=0;i<data.length;i++)
+                            {
+                                html=html+' <tr>'+
+                                        '<td>'+data[i].real_name+'</td>'+
+                                        '<td>'+data[i].user_id+'</td>'+
+                                        '<td>'+data[i].user_idcode+'</td>'+
+                                        ' <td>'+data[i].total_balance+'</td>'+
+                                        '</tr>';
+                            }
+
+                            $(".tablelist tbody").append(html);
+
+                        }
+
+
+
+
+                    }
+                });
+
+                return false;
+            }
+
+
+
+
+
+
+        });
+
+    </script>
 
 </body>
 
