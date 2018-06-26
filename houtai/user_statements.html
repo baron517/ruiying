@@ -4,7 +4,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>无标题文档</title>
 <link href="css/style.css" rel="stylesheet" type="text/css" />
+<script src="js/common.js"></script>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/laydate/laydate.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -46,7 +48,19 @@ $(document).ready(function(){
 
 
         <div class="seach-col">
-            <label>姓名：</label> <input type="text" id="real_name"  class="dfinput">
+            
+            
+             <label>用户名：</label> <input type="text" id="user_name"  class="dfinput">
+             
+              <label>创建时间：</label> <input type="text" id="create_time" onclick="laydate();"  class="dfinput">
+              
+              <label>上传状态：</label> 
+              <select id="upload_state" class="dfinput">
+                  <option value="">全部</option>
+                  <option value="0">未上传</option>
+                  <option value="1">已上传</option>
+                  <option value="2">待上传</option>
+              </select>
 
             <input id="searchBtn" type="button" class="btn" value="搜索">
         </div>
@@ -92,10 +106,16 @@ $(document).ready(function(){
 
             var pageSize= 10;
 
-            var real_name="";
+            var user_name;
+            var upload_state;
+            var create_time;
+            
             $("#searchBtn").click(function()
             {
-                real_name=$("#real_name").val();
+                user_name=$("#user_name").val();
+                upload_state=$("#upload_state").val();
+                create_time=$("#create_time").val();
+                
                 $("#Pagination").empty();
                 pageInit();
             });
@@ -104,15 +124,15 @@ $(document).ready(function(){
             {
                 $.ajax({
                     type: "GET",
-                    url: "data/user_balance.json",
+                    url: serverUrl+"/check/user_statements",
                     dataType:"json",
-                    data: {real_name:real_name},
+                    data: {user_name:user_name,upload_state:upload_state,create_time:create_time},
                     success: function(data){
 
                         console.log(data);
                         if(data.code=1000)
                         {
-                            var page_count=data.page_count;
+                            var page_count=data.total;
                             // 创建分页
                             $("#Pagination").pagination(page_count, {
                                 num_edge_entries: 1, //边缘页数
@@ -133,17 +153,19 @@ $(document).ready(function(){
 
             function pageselectCallback(page_index, jq){
 
+                page_index=page_index+1;
+
                 $.ajax({
                     type: "GET",
-                    url: "data/user_statements.json",
+                    url: serverUrl+"/check/user_statements",
                     dataType:"json",
-                    data: {pageSize:pageSize,page_index:page_index,real_name:real_name},
+                    data: {limit:pageSize,pageNum:page_index,user_name:user_name,upload_state:upload_state,create_time:create_time},
                     success: function(data){
 
                         console.log(data);
                         if(data.code=1000)
                         {
-                            data=data.data;
+                            data=data.list;
                             $(".tablelist tbody").empty();
                             var html="";
                             for(var i=0;i<data.length;i++)
@@ -178,7 +200,7 @@ $(document).ready(function(){
 
                                 html=html+' <tr>'+
                                         '<td>'+data[i].txn_log_id+'</td>'+
-                                        '<td>'+data[i].real_name+'</td>'+
+                                        '<td>'+data[i].user_name+'</td>'+
                                         '<td>'+action_type+'</td>'+
                                         '<td>'+data[i].amount+'</td>'+
                                         '<td>'+data[i].create_time+'</td>'+

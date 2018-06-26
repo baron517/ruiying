@@ -326,6 +326,7 @@ h2{font-weight:normal;}
 .seach-col{padding:20px 30px 16px 0;text-align: right;}
 .seach-col label{font-size:15px;}
 .seach-col .dfinput{width:200px;}
+.seach-col label{margin-left:20px;}
 .seach-col .btn{width:80px;background-size:100% 100%;position: relative;top:2px;margin-left:20px;}
 
 

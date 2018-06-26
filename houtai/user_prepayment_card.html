@@ -4,8 +4,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>无标题文档</title>
     <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <script src="js/common.js"></script>
     <script type="text/javascript" src="js/jquery.js"></script>
-
+    <script type="text/javascript" src="js/laydate/laydate.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
             $(".click").click(function(){
@@ -46,7 +47,25 @@
 
 
     <div class="seach-col">
-        <label>姓名：</label> <input type="text" id="real_name"  class="dfinput">
+        <!--<label>卡号：</label> <input type="text" id="card_no"  class="dfinput">-->
+        <label>姓名：</label> <input type="text" id="user_name"  class="dfinput">
+
+        <label>身份证号：</label> <input type="text" id="user_idcode"  class="dfinput">
+        
+        <label>交易类型：</label>
+         <select id="action_type" class="dfinput">
+                  <option value="">全部</option>
+                  <option value="1">充值</option>
+                  <option value="2">消费</option>
+                  <option value="3">退贷</option>
+              </select>
+       
+        
+        <!--<label>开卡金额：</label> <input type="text" id="amount"  class="dfinput">
+
+        <label>卡余额：</label> <input type="text" id="balance"  class="dfinput">-->
+        
+        <label>开卡时间：</label> <input type="text" id="create_time"  onclick="laydate();" class="dfinput">
 
         <input id="searchBtn" type="button" class="btn" value="搜索">
     </div>
@@ -62,7 +81,7 @@
             <th>交易</th>
             <th>开卡金额</th>
             <th>卡余额</th>
-            <th>创建时间</th>
+            <th>开卡时间</th>
             <th>卡状态</th>
 
         </tr>
@@ -95,10 +114,18 @@
 
         var pageSize= 10;
 
-        var real_name="";
+        var user_name;
+        var user_idcode;
+        var action_type;
+        var create_time;
+
         $("#searchBtn").click(function()
         {
-            real_name=$("#real_name").val();
+            user_name=$("#user_name").val();
+            action_type=$("#action_type").val();
+            user_idcode=$("#user_idcode").val();
+            create_time=$("#create_time").val();
+
             $("#Pagination").empty();
             pageInit();
         });
@@ -107,15 +134,15 @@
         {
             $.ajax({
                 type: "GET",
-                url: "data/user_balance.json",
+                url: serverUrl+"/check/user_card",
                 dataType:"json",
-                data: {real_name:real_name},
+                data: {user_name:user_name,user_idcode:user_idcode,action_type:action_type,create_time:create_time},
                 success: function(data){
 
                     console.log(data);
                     if(data.code=1000)
                     {
-                        var page_count=data.page_count;
+                        var page_count=data.total;
                         // 创建分页
                         $("#Pagination").pagination(page_count, {
                             num_edge_entries: 1, //边缘页数
@@ -136,17 +163,19 @@
 
         function pageselectCallback(page_index, jq){
 
+            page_index=page_index+1;
+
             $.ajax({
                 type: "GET",
-                url: "data/user_prepayment_card.json",
+                url: serverUrl+"/check/user_card",
                 dataType:"json",
-                data: {pageSize:pageSize,page_index:page_index,real_name:real_name},
+                data: {limit:pageSize,pageNum:page_index,user_name:user_name,user_idcode:user_idcode,action_type:action_type,create_time:create_time},
                 success: function(data){
 
                     console.log(data);
                     if(data.code=1000)
                     {
-                        data=data.data;
+                        data=data.list;
                         $(".tablelist tbody").empty();
                         var html="";
                         for(var i=0;i<data.length;i++)
@@ -173,15 +202,14 @@
                                 var card_status="无效";
                             }
 
-
                             html=html+' <tr>'+
-                                    '<td>'+data[i].id+'</td>'+
+                                    '<td>'+data[i].txn_log_id+'</td>'+
                                     '<td>'+data[i].real_name+'</td>'+
                                     '<td>'+data[i].user_idcode+'</td>'+
                                     '<td>'+data[i].card_no+'</td>'+
                                     '<td>'+action_type+'</td>'+
-                                    '<td>'+data[i].card_no+'</td>'+
                                     '<td>'+data[i].amount+'</td>'+
+                                    '<td>'+data[i].balance+'</td>'+
                                     '<td>'+data[i].create_time+'</td>'+
                                     ' <td>'+card_status+'</td>'+
                                     '</tr>';

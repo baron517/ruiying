@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>无标题文档</title>
 <link href="css/style.css" rel="stylesheet" type="text/css" />
+<script src="js/common.js"></script>
 <script type="text/javascript" src="js/jquery.js"></script>
 
 <script type="text/javascript">
@@ -46,9 +47,14 @@ $(document).ready(function(){
     
 
         <div class="seach-col">
-        <label>姓名：</label> <input type="text" id="real_name"  class="dfinput">
-
-        <input id="searchBtn" type="button" class="btn" value="搜索">
+            
+            <label>姓名：</label> <input type="text" id="real_name"  class="dfinput">
+            
+            <label>用户id：</label> <input type="text" id="user_id"  class="dfinput">
+            
+            <label>身份证号：</label> <input type="text" id="user_idcode"  class="dfinput">
+    
+            <input id="searchBtn" type="button" class="btn" value="搜索">
         </div>
     
 
@@ -91,10 +97,15 @@ $(document).ready(function(){
 
               var pageSize= 10;
 
-            var real_name="";
+            var real_name;
+            var user_id;
+            var user_idcode;
+            
             $("#searchBtn").click(function()
             {
                 real_name=$("#real_name").val();
+                user_id=$("#user_id").val();
+                user_idcode=$("#user_idcode").val();
                 $("#Pagination").empty();
                 pageInit();
             });
@@ -104,15 +115,16 @@ $(document).ready(function(){
 
                 $.ajax({
                     type: "GET",
-                    url: "data/user_balance.json",
+                    url: serverUrl+"/check/user_balance",
                     dataType:"json",
-                    data: {real_name:real_name},
+                    data: {userName:real_name,user_idcode:user_idcode,user_id:user_id},
                     success: function(data){
 
                         console.log(data);
                         if(data.code=1000)
                         {
-                            var page_count=data.page_count;
+                            var page_count=data.total;
+                            pageSize=data.limit;
                             // 创建分页
                             $("#Pagination").pagination(page_count, {
                                 num_edge_entries: 1, //边缘页数
@@ -135,17 +147,19 @@ $(document).ready(function(){
 
             function pageselectCallback(page_index, jq){
 
+                page_index=page_index+1;
+                
                 $.ajax({
                     type: "GET",
-                    url: "data/user_balance.json",
+                    url: serverUrl+"/check/user_balance",
                     dataType:"json",
-                    data: {pageSize:pageSize,page_index:page_index,real_name:real_name},
+                    data: {limit:pageSize,pageNum:page_index,userName:real_name,user_idcode:user_idcode,user_id:user_id},
                     success: function(data){
 
                         console.log(data);
                         if(data.code=1000)
                         {
-                            data=data.data;
+                            data=data.list;
                             $(".tablelist tbody").empty();
                             var html="";
                             for(var i=0;i<data.length;i++)
